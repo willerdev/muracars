@@ -12,6 +12,7 @@ export interface Vehicle {
   fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
   features?: string[];
   description?: string;
+  flag: 'import' | 'used';
 }
 
 export interface SparePart {
@@ -65,5 +66,14 @@ export interface UserCar {
   car_id: string;
   is_owner: boolean;
   created_at: string;
+  cars: Vehicle;
+}
+
+export interface UserCarWithDetails {
+  id: string;
+  user_id: string;
+  car_id: string;
+  created_at: string;
+  is_owner: boolean;
   cars: Vehicle;
 }

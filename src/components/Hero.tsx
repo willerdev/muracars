@@ -20,7 +20,7 @@ export default function Hero() {
           <p className="text-lg text-gray-200 mb-6">
             Premium vehicles and authentic parts, all in one place
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/vehicles" className="bg-white text-black px-6 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
               Browse Vehicles
             </Link>

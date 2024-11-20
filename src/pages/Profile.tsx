@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { fetchUserProfile, fetchUserCars } from '../lib/database';
 import { Car, User, Settings } from 'lucide-react';
+import ListVehicleForm from '../components/ListVehicleForm';
 
 export default function Profile() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [userCars, setUserCars] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isListingModalOpen, setIsListingModalOpen] = useState(false);
 
   useEffect(() => {
     const loadProfileData = async () => {
@@ -74,7 +76,10 @@ export default function Profile() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">My Listed Vehicles</h2>
-            <button className="flex items-center text-white bg-black px-4 py-2 rounded-md hover:bg-gray-800">
+            <button 
+              onClick={() => setIsListingModalOpen(true)} 
+              className="flex items-center text-white bg-black px-4 py-2 rounded-md hover:bg-gray-800"
+            >
               <Car className="h-5 w-5 mr-2" />
               List New Vehicle
             </button>
@@ -99,6 +104,18 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {isListingModalOpen && (
+        <ListVehicleForm
+          onClose={() => setIsListingModalOpen(false)}
+          onSuccess={() => {
+            setIsListingModalOpen(false);
+            // Refresh the user's cars list
+            loadProfileData();
+          }}
+          userId={user?.id || ''}
+        />
+      )}
     </div>
   );
 }
