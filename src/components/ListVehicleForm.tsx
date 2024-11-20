@@ -63,7 +63,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
 
     try {
       // Only include fields that exist in the database
-      const carData = {
+      const vehicleData = {
         make: form.make,
         model: form.model,
         year: form.year,
@@ -82,7 +82,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
       // Insert the car listing
       const { data: carData, error: carError } = await supabase
         .from('cars')
-        .insert(carData)
+        .insert(vehicleData)
         .select()
         .single();
 
