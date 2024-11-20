@@ -183,7 +183,7 @@ export default function Profile() {
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
               >
                 <Shield className="h-4 w-4" />
-                <span className="ml-2">KYC Verification</span>
+                <span className="ml-2">KYC </span>
               </button>
             </nav>
           </div>

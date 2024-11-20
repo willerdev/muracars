@@ -21,10 +21,9 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
     year: new Date().getFullYear(),
     price: 0,
     mileage: 0,
-    condition: 'Used' as Vehicle['condition'],
     transmission: 'Automatic' as Vehicle['transmission'],
     fuelType: 'Petrol' as Vehicle['fuelType'],
-    description: '',
+    features: '',
     image_url: '',
     gallery_images: [] as string[],
     flag: 'used' as 'used'
@@ -63,13 +62,27 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
     setError(null);
 
     try {
+      // Only include fields that exist in the database
+      const carData = {
+        make: form.make,
+        model: form.model,
+        year: form.year,
+        price: form.price,
+        mileage: form.mileage,
+        transmission: form.transmission,
+        fuel_type: form.fuelType,
+        image_url: form.image_url,
+        features: form.features,
+        description: '',
+        gallery_images: form.gallery_images,
+        flag: form.flag,
+        created_at: new Date().toISOString()
+      };
+
       // Insert the car listing
       const { data: carData, error: carError } = await supabase
         .from('cars')
-        .insert({
-          ...form,
-          created_at: new Date().toISOString()
-        })
+        .insert(carData)
         .select()
         .single();
 
@@ -184,21 +197,6 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   value={form.mileage}
                   onChange={e => setForm(prev => ({ ...prev, mileage: parseInt(e.target.value) }))}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Condition
-                </label>
-                <select
-                  required
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.condition}
-                  onChange={e => setForm(prev => ({ ...prev, condition: e.target.value as Vehicle['condition'] }))}
-                >
-                  <option value="Used">Used</option>
-                  <option value="New">New</option>
-                </select>
               </div>
 
               <div>
