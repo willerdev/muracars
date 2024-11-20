@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Upload, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Vehicle } from '../types';
+import { uploadFile } from '../lib/storage';
 
 interface ListVehicleFormProps {
   onClose: () => void;
@@ -37,20 +38,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
 
     try {
       for (const file of Array.from(e.target.files)) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `vehicle-listings/${fileName}`;
-
-        const { error: uploadError, data } = await supabase.storage
-          .from('vehicles')
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('vehicles')
-          .getPublicUrl(filePath);
-
+        const publicUrl = await uploadFile(file, 'vehicle-listings');
         uploadedUrls.push(publicUrl);
       }
 

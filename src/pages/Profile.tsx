@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { fetchUserProfile, fetchUserCars, fetchUserOrders } from '../lib/database';
-import { Car, User, Settings, Package, Clock } from 'lucide-react';
+import { fetchUserProfile, fetchUserCars } from '../lib/database';
+import { Car, User } from 'lucide-react';
 import ListVehicleForm from '../components/ListVehicleForm';
 import ProfileSettings from '../components/ProfileSettings';
 import OrderHistory from '../components/OrderHistory';
 import OrderTracking from '../components/OrderTracking';
+import { useNavigate } from 'react-router-dom';
 
 type TabType = 'overview' | 'orders' | 'tracking' | 'settings';
 
+type User = {
+  id: string;
+  email: string;
+  // ... other user properties
+};
+
 export default function Profile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [userCars, setUserCars] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -18,11 +26,16 @@ export default function Profile() {
   const [isListingModalOpen, setIsListingModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!user?.id) {
+      navigate('/login');
+      return;
+    }
+    
     loadProfileData();
-  }, [user]);
+  }, [user, navigate]);
 
   const loadProfileData = async () => {
-    if (!user) return;
+    if (!user?.id) return;
     
     try {
       const [profileData, carsData] = await Promise.all([
@@ -106,6 +119,10 @@ export default function Profile() {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
       </div>
     );
+  }
+
+  if (!user) {
+    return null; // or a loading spinner
   }
 
   return (

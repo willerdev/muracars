@@ -23,6 +23,7 @@ import UsedCars from './pages/UsedCars';
 import Sell from './pages/Sell';
 import MyListings from './pages/MyListings';
 import Settings from './pages/settings';
+import Offline from './pages/Offline';
 
 
 interface PrivateRouteProps {
@@ -54,6 +55,7 @@ function App() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     const loadVehicles = async () => {
@@ -70,6 +72,23 @@ function App() {
 
     loadVehicles();
   }, []);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  if (!isOnline) {
+    return <Offline />;
+  }
 
   const filteredVehicles = vehicles.filter(vehicle => {
     if (filters.condition && vehicle.condition !== filters.condition) return false;

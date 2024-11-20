@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Vehicle } from '../types';
 import { X, Upload, Loader, Car, Package2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { uploadFile } from '../lib/storage';
 
 type ListingType = 'vehicle' | 'part';
 
@@ -49,20 +50,7 @@ export default function Sell() {
 
     try {
       for (const file of Array.from(e.target.files)) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${listingType}-listings/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('vehicles')
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('vehicles')
-          .getPublicUrl(filePath);
-
+        const publicUrl = await uploadFile(file, `${listingType}-listings`);
         uploadedUrls.push(publicUrl);
       }
 

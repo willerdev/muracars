@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Upload, Loader, Shield, CheckCircle } from 'lucide-react';
+import { uploadFile } from '../lib/storage';
 
 interface KYCVerificationProps {
   onSuccess?: () => void;
@@ -36,20 +37,8 @@ export default function KYCVerification({ onSuccess }: KYCVerificationProps) {
     
     try {
       const file = e.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `kyc-documents/${user?.id}/${type}-${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('verifications')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('verifications')
-        .getPublicUrl(filePath);
-
+      const publicUrl = await uploadFile(file, `kyc-documents/${user?.id}/${type}`);
+      
       setForm(prev => ({
         ...prev,
         [type === 'id' ? 'id_document_url' : 'proof_of_address_url']: publicUrl

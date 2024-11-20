@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { fetchUserProfile, fetchUserCars, fetchUserOrders } from '../lib/database';
-import { Car, User, Settings, Package, Clock } from 'lucide-react';
+import { Car, User, Settings, Package, Clock, Shield } from 'lucide-react';
 import ListVehicleForm from '../components/ListVehicleForm';
 import ProfileSettings from '../components/ProfileSettings';
 import OrderHistory from '../components/OrderHistory';
 import OrderTracking from '../components/OrderTracking';
 import KYCVerification from '../components/KYCVerification';
+import { useNavigate } from 'react-router-dom';
 
 type TabType = 'overview' | 'orders' | 'tracking' | 'settings' | 'verification';
 
@@ -141,7 +142,7 @@ export default function Profile() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Overview
+                <User className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setActiveTab('orders')}
@@ -161,7 +162,7 @@ export default function Profile() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Tracking
+                <Clock className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setActiveTab('settings')}
@@ -172,6 +173,17 @@ export default function Profile() {
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
               >
                 <Settings className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setActiveTab('verification')}
+                className={`${
+                  activeTab === 'verification'
+                    ? 'border-black text-black'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
+              >
+                <Shield className="h-4 w-4" />
+                <span className="ml-2">KYC Verification</span>
               </button>
             </nav>
           </div>
