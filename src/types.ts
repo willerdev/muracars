@@ -5,12 +5,13 @@ export interface Vehicle {
   year: number;
   price: number;
   mileage: number;
-  image: string;
+  image_url: string;
+  gallery_images?: string[];
   condition: 'New' | 'Used';
   transmission: 'Automatic' | 'Manual';
   fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
-  description?: string;
   features?: string[];
+  description?: string;
 }
 
 export interface SparePart {
@@ -48,4 +49,21 @@ export interface User {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+}
+
+export interface Profile {
+  id: string;
+  username: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserCar {
+  id: string;
+  user_id: string;
+  car_id: string;
+  is_owner: boolean;
+  created_at: string;
+  cars: Vehicle;
 }

@@ -22,7 +22,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="hover:text-gray-300">Vehicles</Link>
-            <a href="#parts" className="hover:text-gray-300">Spare Parts</a>
+            <Link to="/spare-parts" className="hover:text-gray-300">Spare Parts</Link>
             <a href="#services" className="hover:text-gray-300">Services</a>
             <Search className="h-5 w-5 cursor-pointer hover:text-gray-300" />
             <ShoppingCart 
@@ -33,9 +33,12 @@ export default function Navbar({ onCartClick }: NavbarProps) {
               <div className="relative group">
                 <User className="h-5 w-5 cursor-pointer hover:text-gray-300" />
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
-                  <div className="px-4 py-2 text-sm text-gray-700">
-                    {user?.name}
-                  </div>
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Profile
+                  </Link>
                   <button
                     onClick={logout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -63,7 +66,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" className="block px-3 py-2 hover:bg-gray-900">Vehicles</Link>
-            <a href="#parts" className="block px-3 py-2 hover:bg-gray-900">Spare Parts</a>
+            <Link to="/spare-parts" className="block px-3 py-2 hover:bg-gray-900">Spare Parts</Link>
             <a href="#services" className="block px-3 py-2 hover:bg-gray-900">Services</a>
             {isAuthenticated ? (
               <>

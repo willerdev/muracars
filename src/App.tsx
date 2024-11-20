@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Filters from './components/Filters';
@@ -9,10 +9,30 @@ import Cart from './components/Cart';
 import VehicleDetail from './pages/VehicleDetail';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import { vehicles } from './data/vehicles';
-import { FilterState } from './types';
-import { AuthProvider } from './context/AuthContext';
+import { fetchCars } from './lib/database';
+import { FilterState, Vehicle } from './types';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import Profile from './pages/Profile';
+import OrderPage from './pages/OrderPage';
+import TradeIn from './pages/TradeIn';
+import SparePartsPage from './pages/SparePartsPage';
+
+interface PrivateRouteProps {
+  element: React.ReactElement;
+}
+
+function PrivateRoute({ element }: PrivateRouteProps) {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    // Redirect to login with the return URL
+    return <Navigate to={`/login?redirect=${location.pathname}`} replace />;
+  }
+
+  return element;
+}
 
 function App() {
   const [filters, setFilters] = useState<FilterState>({
@@ -24,6 +44,25 @@ function App() {
     fuelType: ''
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadVehicles = async () => {
+      try {
+        const data = await fetchCars();
+        setVehicles(data);
+      } catch (err) {
+        setError('Failed to load vehicles');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadVehicles();
+  }, []);
 
   const filteredVehicles = vehicles.filter(vehicle => {
     if (filters.condition && vehicle.condition !== filters.condition) return false;
@@ -47,6 +86,18 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/vehicle/:id" element={<VehicleDetail />} />
+              <Route 
+                path="/order/:id" 
+                element={<PrivateRoute element={<OrderPage />} />} 
+              />
+              <Route 
+                path="/trade-in/:id" 
+                element={<PrivateRoute element={<TradeIn />} />} 
+              />
+              <Route 
+                path="/profile" 
+                element={<PrivateRoute element={<Profile />} />} 
+              />
               <Route path="/" element={
                 <>
                   <Hero />
@@ -60,12 +111,13 @@ function App() {
                           <h2 className="text-2xl font-bold">Available Vehicles</h2>
                           <span className="text-gray-600">{filteredVehicles.length} results</span>
                         </div>
-                        <VehicleGrid vehicles={filteredVehicles} />
+                        <VehicleGrid vehicles={filteredVehicles} isLoading={isLoading} />
                       </div>
                     </div>
                   </main>
                 </>
               } />
+              <Route path="/spare-parts" element={<SparePartsPage />} />
             </Routes>
             
             <Footer />
