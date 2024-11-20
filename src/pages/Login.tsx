@@ -30,10 +30,10 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col">
       {/* Left side - Form */}
       <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full  space-y-8">
           <div className="text-center">
             <Link to="/" className="flex items-center justify-center mb-6">
               <Car className="h-10 w-10 text-black" />

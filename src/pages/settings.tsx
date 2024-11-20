@@ -6,8 +6,9 @@ import ListVehicleForm from '../components/ListVehicleForm';
 import ProfileSettings from '../components/ProfileSettings';
 import OrderHistory from '../components/OrderHistory';
 import OrderTracking from '../components/OrderTracking';
+import KYCVerification from '../components/KYCVerification';
 
-type TabType = 'overview' | 'orders' | 'tracking' | 'settings';
+type TabType = 'overview' | 'orders' | 'tracking' | 'settings' | 'verification';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -48,7 +49,11 @@ export default function Profile() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h2 className="font-semibold mb-2">Member Since</h2>
-                  <p>{new Date(profile?.created_at).toLocaleDateString()}</p>
+                  <p>
+                    {profile?.created_at 
+                      ? new Date(profile.created_at).toLocaleDateString()
+                      : '11/20/2024'}
+                  </p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h2 className="font-semibold mb-2">Listed Cars</h2>
@@ -65,7 +70,7 @@ export default function Profile() {
                   className="flex items-center text-white bg-black px-4 py-2 rounded-md hover:bg-gray-800"
                 >
                   <Car className="h-5 w-5 mr-2" />
-                  List New Vehicle
+                  Post
                 </button>
               </div>
               
@@ -95,6 +100,8 @@ export default function Profile() {
         return <OrderTracking userId={user?.id || ''} />;
       case 'settings':
         return <ProfileSettings profile={profile} onUpdate={loadProfileData} />;
+      case 'verification':
+        return <KYCVerification onSuccess={loadProfileData} />;
       default:
         return null;
     }
@@ -142,9 +149,9 @@ export default function Profile() {
                   activeTab === 'orders'
                     ? 'border-black text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
               >
-                Orders
+                <Package className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setActiveTab('tracking')}
@@ -154,7 +161,7 @@ export default function Profile() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Order Tracking
+                Tracking
               </button>
               <button
                 onClick={() => setActiveTab('settings')}
@@ -162,9 +169,9 @@ export default function Profile() {
                   activeTab === 'settings'
                     ? 'border-black text-black'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
               >
-                Settings
+                <Settings className="h-4 w-4" />
               </button>
             </nav>
           </div>

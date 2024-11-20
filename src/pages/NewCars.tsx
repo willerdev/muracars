@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Vehicle } from '../types';
-import VehicleGrid from '../components/VehicleGrid';
-import Filters from '../components/Filters';
+
+import { Search } from 'lucide-react';
 
 export default function NewCars() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     condition: 'New',
     minPrice: 0,
@@ -37,19 +38,65 @@ export default function NewCars() {
     fetchNewCars();
   }, []);
 
+  const filteredVehicles = vehicles.filter(vehicle => {
+    const searchString = `${vehicle.make} ${vehicle.model} ${vehicle.year}`.toLowerCase();
+    return searchString.includes(searchQuery.toLowerCase());
+  });
+
   return (
-    <div className="pt-16 pb-20 md:pb-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold mb-8">New Cars</h1>
-        
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="hidden md:block md:w-1/4">
-            <Filters filters={filters} setFilters={setFilters} />
-          </div>
-          <div className="w-full md:w-3/4">
-            <VehicleGrid vehicles={vehicles} isLoading={isLoading} />
-          </div>
+    <div className="pt-16 pb-20">
+      <div className="px-4 py-4">
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <input
+            type="text"
+            placeholder="Search vehicles..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         </div>
+
+        {/* Mobile Vehicle Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-3">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md p-2">
+                <div className="h-32 bg-gray-200 rounded-lg animate-pulse mb-2" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse mb-2" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {filteredVehicles.map((vehicle) => (
+              <div key={vehicle.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <img
+                  src={vehicle.image_url}
+                  alt={`${vehicle.make} ${vehicle.model}`}
+                  className="w-full h-32 object-cover"
+                />
+                <div className="p-2">
+                  <h3 className="font-semibold text-sm truncate">
+                    {vehicle.year} {vehicle.make}
+                  </h3>
+                  <p className="text-sm text-gray-600">{vehicle.model}</p>
+                  <p className="text-sm font-bold mt-1">
+                    ${vehicle.price.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {filteredVehicles.length === 0 && !isLoading && (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No vehicles found</p>
+          </div>
+        )}
       </div>
     </div>
   );

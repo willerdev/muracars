@@ -20,6 +20,10 @@ import SparePartsPage from './pages/SparePartsPage';
 import MobileNavTabs from './components/MobileNavTabs';
 import NewCars from './pages/NewCars';
 import UsedCars from './pages/UsedCars';
+import Sell from './pages/Sell';
+import MyListings from './pages/MyListings';
+import Settings from './pages/settings';
+
 
 interface PrivateRouteProps {
   element: React.ReactElement;
@@ -97,6 +101,14 @@ function App() {
                 path="/trade-in/:id" 
                 element={<PrivateRoute element={<TradeIn />} />} 
               />
+               <Route 
+                path="/new-cars" 
+                element={<PrivateRoute element={<NewCars />} />} 
+              />
+              <Route 
+                path="/settings" 
+                element={<PrivateRoute element={<Settings />} />} 
+              />
               <Route 
                 path="/profile" 
                 element={<PrivateRoute element={<Profile />} />} 
@@ -121,8 +133,10 @@ function App() {
                 </>
               } />
               <Route path="/spare-parts" element={<SparePartsPage />} />
+              <Route path="/sell" element={<PrivateRoute element={<Sell />} />} />
               <Route path="/new-cars" element={<NewCars />} />
               <Route path="/used-cars" element={<UsedCars />} />
+              <Route path="/my-listings" element={<PrivateRoute element={<MyListings />} />} />
             </Routes>
             
             <Footer className="hidden md:block" />

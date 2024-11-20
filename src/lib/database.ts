@@ -52,3 +52,32 @@ export async function fetchUserProfile(userId: string) {
   if (error) throw error;
   return data;
 }
+
+export async function fetchUserOrders(userId: string) {
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      cars (
+        make,
+        model,
+        year,
+        image_url
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateUserProfile(userId: string, updates: any) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', userId);
+
+  if (error) throw error;
+  return data;
+}
