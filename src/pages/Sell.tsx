@@ -1,21 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Vehicle } from '../types';
 import { X, Upload, Loader, Car, Package2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { uploadFile } from '../lib/storage';
+import { uploadFiles } from '../lib/storage';
 import { sendVehicleListingEmail } from '../lib/emailService';
 
 type ListingType = 'vehicle' | 'part';
 
 export default function Sell() {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [listingType, setListingType] = useState<ListingType>('vehicle');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only redirect if auth is not loading and user is not authenticated
+    if (!authLoading && !isAuthenticated) {
+      navigate('/login', { 
+        state: { redirect: '/sell' }
+      });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
+
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // Only render the form if user is authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Vehicle form state
   const [vehicleForm, setVehicleForm] = useState({
@@ -29,7 +52,7 @@ export default function Sell() {
     body_type: '',
     color: '',
     image_url: '',
-    features: '',
+    features: [] as string[],
     images: '',
     flag: 'used' as 'used' | 'import',
     created_at: new Date().toISOString(),
@@ -50,19 +73,16 @@ export default function Sell() {
     if (!e.target.files || !e.target.files.length) return;
     
     setUploadingImages(true);
-    const uploadedUrls: string[] = [];
-
+    
     try {
-      for (const file of Array.from(e.target.files)) {
-        const publicUrl = await uploadFile(file, `${listingType}-listings`);
-        uploadedUrls.push(publicUrl);
-      }
+      const files = Array.from(e.target.files);
+      const uploadedUrls = await uploadFiles(files, `${listingType}-listings`);
 
       if (listingType === 'vehicle') {
         setVehicleForm(prev => ({
           ...prev,
-          image_url: uploadedUrls[0],
-          images: uploadedUrls.join(',')
+          image_url: uploadedUrls[0], // First image as main image
+          images: uploadedUrls.join(',') // All images as comma-separated string
         }));
       } else {
         setPartForm(prev => ({
@@ -80,53 +100,68 @@ export default function Sell() {
 
   const handleVehicleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user?.id) {
+      setError('User not authenticated');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
+      // First insert the car
       const { data: carData, error: carError } = await supabase
         .from('cars')
         .insert({
           make: vehicleForm.make,
           model: vehicleForm.model,
-          year: vehicleForm.year,
-          price: vehicleForm.price,
-          mileage: vehicleForm.mileage,
+          year: Number(vehicleForm.year),
+          price: Number(vehicleForm.price),
+          mileage: Number(vehicleForm.mileage),
           fuel_type: vehicleForm.fuel_type,
           transmission: vehicleForm.transmission,
           body_type: vehicleForm.body_type,
           color: vehicleForm.color,
           image_url: vehicleForm.image_url,
           features: vehicleForm.features,
-          images: vehicleForm.images,
+          images: vehicleForm.images ? vehicleForm.images.split(',') : [],
           flag: vehicleForm.flag,
-          created_at: vehicleForm.created_at,
-          updated_at: vehicleForm.updated_at
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (carError) throw carError;
 
+      if (!carData?.id) {
+        throw new Error('Failed to create car listing');
+      }
+
+      // Then create the user_cars relationship with explicit user_id
       const { error: userCarError } = await supabase
         .from('user_cars')
         .insert({
-          user_id: user?.id,
+          user_id: user.id, // Explicitly set user_id
           car_id: carData.id,
           is_owner: true
         });
 
-      if (userCarError) throw userCarError;
+      if (userCarError) {
+        // Rollback car creation if user_cars insertion fails
+        await supabase.from('cars').delete().eq('id', carData.id);
+        throw userCarError;
+      }
 
-      // Send email notification for new vehicle listing
-      await sendVehicleListingEmail(vehicleForm, user?.email);
-
+      await sendVehicleListingEmail(vehicleForm, user.email);
+      
       navigate('/profile', { 
         state: { message: 'Vehicle listed successfully!' }
       });
     } catch (err) {
       console.error('Error creating listing:', err);
-      setError('Failed to create listing');
+      setError(err.message || 'Failed to create listing');
     } finally {
       setIsLoading(false);
     }
@@ -350,6 +385,22 @@ export default function Sell() {
                     onChange={e => setVehicleForm(prev => ({ ...prev, color: e.target.value }))}
                   />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Features (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    value={Array.isArray(vehicleForm.features) ? vehicleForm.features.join(', ') : ''}
+                    onChange={e => setVehicleForm(prev => ({
+                      ...prev,
+                      features: e.target.value.split(',').map(f => f.trim()).filter(Boolean)
+                    }))}
+                    placeholder="Air Conditioning, Power Steering, etc."
+                  />
+                </div>
               </div>
 
               {/* Image upload section */}
@@ -385,13 +436,34 @@ export default function Sell() {
                   </div>
                 )}
 
-                {vehicleForm.image_url && (
-                  <div className="mt-4">
-                    <img
-                      src={vehicleForm.image_url}
-                      alt="Main vehicle image"
-                      className="h-48 w-full object-cover rounded-lg"
-                    />
+                {vehicleForm.images && (
+                  <div className="mt-4 grid grid-cols-4 gap-4">
+                    {vehicleForm.images.split(',').map((url, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Vehicle image ${index + 1}`}
+                          className="h-24 w-full object-cover rounded-lg"
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const newImages = vehicleForm.images
+                              .split(',')
+                              .filter((_, i) => i !== index)
+                              .join(',');
+                            setVehicleForm(prev => ({
+                              ...prev,
+                              images: newImages,
+                              image_url: index === 0 ? newImages.split(',')[0] || '' : prev.image_url
+                            }));
+                          }}
+                          className="absolute top-1 right-1 p-1 bg-black/50 rounded-full hover:bg-black/70"
+                        >
+                          <X className="h-4 w-4 text-white" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

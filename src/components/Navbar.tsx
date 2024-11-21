@@ -30,23 +30,15 @@ export default function Navbar({ onCartClick }: NavbarProps) {
               onClick={onCartClick}
             />
             {isAuthenticated ? (
-              <div className="relative group">
-                <User className="h-5 w-5 cursor-pointer hover:text-gray-300" />
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </div>
-              </div>
+              <>
+                <Link to="/profile" className="hover:text-gray-300">Profile</Link>
+                <button
+                  onClick={logout}
+                  className="hover:text-gray-300"
+                >
+                  Sign out
+                </button>
+              </>
             ) : (
               <Link to="/login" className="hover:text-gray-300">
                 Sign in
@@ -67,10 +59,10 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" className="block px-3 py-2 hover:bg-gray-900">Vehicles</Link>
             <Link to="/spare-parts" className="block px-3 py-2 hover:bg-gray-900">Spare Parts</Link>
-            <a href="#services" className="block px-3 py-2 hover:bg-gray-900">Services</a>
+            <Link to="/korea-service" className="block px-3 py-2 hover:bg-gray-900">Korea Service</Link>
             {isAuthenticated ? (
               <>
-                <div className="px-3 py-2 text-gray-300">{user?.name}</div>
+                <Link to="/profile" className="block px-3 py-2 hover:bg-gray-900">Profile</Link>
                 <button
                   onClick={logout}
                   className="block w-full text-left px-3 py-2 hover:bg-gray-900"

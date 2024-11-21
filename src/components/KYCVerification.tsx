@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Upload, Loader, Shield, CheckCircle } from 'lucide-react';
-import { uploadFile } from '../lib/storage';
+import { uploadFile, uploadFiles } from '../lib/storage';
 
 interface KYCVerificationProps {
   onSuccess?: () => void;

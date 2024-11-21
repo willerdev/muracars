@@ -28,3 +28,17 @@ export async function uploadFile(
 
   return data.publicUrl;
 }
+
+export async function uploadFiles(
+  files: File[],
+  path: string
+): Promise<string[]> {
+  const uploadedUrls: string[] = [];
+
+  for (const file of files) {
+    const url = await uploadFile(file, path);
+    uploadedUrls.push(url);
+  }
+
+  return uploadedUrls;
+}

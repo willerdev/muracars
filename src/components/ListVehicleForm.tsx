@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Upload, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Vehicle } from '../types';
-import { uploadFile } from '../lib/storage';
+import { uploadFile, uploadFiles } from '../lib/storage';
 
 interface ListVehicleFormProps {
   onClose: () => void;
