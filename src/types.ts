@@ -5,14 +5,16 @@ export interface Vehicle {
   year: number;
   price: number;
   mileage: number;
+  fuel_type: string;
+  transmission: string;
+  body_type: string;
+  color: string;
   image_url: string;
-  gallery_images?: string[];
-  condition: 'New' | 'Used';
-  transmission: 'Automatic' | 'Manual';
-  fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
-  features?: string[];
-  description?: string;
-  flag: 'import' | 'used';
+  features: string | string[] | null;
+  images: string;
+  flag: 'used' | 'import';
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SparePart {

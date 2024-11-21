@@ -24,6 +24,7 @@ import Sell from './pages/Sell';
 import MyListings from './pages/MyListings';
 import Settings from './pages/settings';
 import Offline from './pages/Offline';
+import Cars from './pages/cars';
 
 
 interface PrivateRouteProps {
@@ -115,6 +116,10 @@ function App() {
               <Route 
                 path="/order/:id" 
                 element={<PrivateRoute element={<OrderPage />} />} 
+              />
+              <Route 
+                path="/cars/:id" 
+                element={<PrivateRoute element={<Cars />} />} 
               />
               <Route 
                 path="/trade-in/:id" 

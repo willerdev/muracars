@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Vehicle } from '../types';
 
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function NewCars() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -14,8 +15,9 @@ export default function NewCars() {
     maxPrice: 0,
     make: '',
     transmission: '',
-    fuelType: ''
+    fuel_type: ''
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchNewCars() {
@@ -23,8 +25,7 @@ export default function NewCars() {
         const { data, error } = await supabase
           .from('cars')
           .select('*')
-          .eq('flag', 'import')
-          .eq('condition', 'New');
+          .eq('flag', 'import');
 
         if (error) throw error;
         setVehicles(data as Vehicle[]);
@@ -72,7 +73,11 @@ export default function NewCars() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {filteredVehicles.map((vehicle) => (
-              <div key={vehicle.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div
+                key={vehicle.id}
+                onClick={() => navigate(`/cars/${vehicle.id}`)}
+                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
+              >
                 <img
                   src={vehicle.image_url}
                   alt={`${vehicle.make} ${vehicle.model}`}

@@ -22,11 +22,15 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
     price: 0,
     mileage: 0,
     transmission: 'Automatic' as Vehicle['transmission'],
-    fuelType: 'Petrol' as Vehicle['fuelType'],
+    fuel_type: 'Petrol' as Vehicle['fuel_type'],
+    body_type: '',
+    color: '',
     features: '',
     image_url: '',
-    gallery_images: [] as string[],
-    flag: 'used' as 'used'
+    images: '',
+    flag: 'used' as const,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +49,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
         setForm(prev => ({
           ...prev,
           image_url: uploadedUrls[0],
-          gallery_images: uploadedUrls.slice(1)
+          images: uploadedUrls.join(',')
         }));
       }
     } catch (err) {
@@ -62,7 +66,6 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
     setError(null);
 
     try {
-      // Only include fields that exist in the database
       const vehicleData = {
         make: form.make,
         model: form.model,
@@ -70,16 +73,17 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
         price: form.price,
         mileage: form.mileage,
         transmission: form.transmission,
-        fuel_type: form.fuelType,
+        fuel_type: form.fuel_type,
+        body_type: form.body_type,
+        color: form.color,
         image_url: form.image_url,
         features: form.features,
-        description: '',
-        gallery_images: form.gallery_images,
+        images: form.images,
         flag: form.flag,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
-      // Insert the car listing
       const { data: carData, error: carError } = await supabase
         .from('cars')
         .insert(vehicleData)
@@ -120,7 +124,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
             <X className="h-6 w-6" />
           </button>
 
-          <h2 className="text-2xl font-bold mb-6">List Your Vehicle</h2>
+          <h2 className="text-2xl font-bold mb-6">List Your Car here</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md">
@@ -229,6 +233,32 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   <option value="Electric">Electric</option>
                   <option value="Hybrid">Hybrid</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Body Type
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  value={form.body_type}
+                  onChange={e => setForm(prev => ({ ...prev, body_type: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Color
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  value={form.color}
+                  onChange={e => setForm(prev => ({ ...prev, color: e.target.value }))}
+                />
               </div>
             </div>
 

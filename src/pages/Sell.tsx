@@ -23,13 +23,16 @@ export default function Sell() {
     year: new Date().getFullYear(),
     price: 0,
     mileage: 0,
-    condition: 'Used' as Vehicle['condition'],
-    transmission: 'Automatic' as Vehicle['transmission'],
-    fuelType: 'Petrol' as Vehicle['fuelType'],
-    description: '',
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
+    body_type: '',
+    color: '',
     image_url: '',
-    gallery_images: [] as string[],
-    flag: 'used' as 'used'
+    features: '',
+    images: '',
+    flag: 'used' as const,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   });
 
   // Spare part form state
@@ -58,7 +61,7 @@ export default function Sell() {
         setVehicleForm(prev => ({
           ...prev,
           image_url: uploadedUrls[0],
-          gallery_images: uploadedUrls.slice(1)
+          images: uploadedUrls.join(',')
         }));
       } else {
         setPartForm(prev => ({
@@ -83,8 +86,21 @@ export default function Sell() {
       const { data: carData, error: carError } = await supabase
         .from('cars')
         .insert({
-          ...vehicleForm,
-          created_at: new Date().toISOString()
+          make: vehicleForm.make,
+          model: vehicleForm.model,
+          year: vehicleForm.year,
+          price: vehicleForm.price,
+          mileage: vehicleForm.mileage,
+          fuel_type: vehicleForm.fuel_type,
+          transmission: vehicleForm.transmission,
+          body_type: vehicleForm.body_type,
+          color: vehicleForm.color,
+          image_url: vehicleForm.image_url,
+          features: vehicleForm.features,
+          images: vehicleForm.images,
+          flag: vehicleForm.flag,
+          created_at: vehicleForm.created_at,
+          updated_at: vehicleForm.updated_at
         })
         .select()
         .single();
@@ -287,14 +303,47 @@ export default function Sell() {
                   <select
                     required
                     className="w-full border border-gray-300 rounded-md p-2"
-                    value={vehicleForm.fuelType}
-                    onChange={e => setVehicleForm(prev => ({ ...prev, fuelType: e.target.value as Vehicle['fuelType'] }))}
+                    value={vehicleForm.fuel_type}
+                    onChange={e => setVehicleForm(prev => ({ ...prev, fuel_type: e.target.value as Vehicle['fuel_type'] }))}
                   >
                     <option value="Petrol">Petrol</option>
                     <option value="Diesel">Diesel</option>
                     <option value="Electric">Electric</option>
                     <option value="Hybrid">Hybrid</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Body Type
+                  </label>
+                  <select
+                    required
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    value={vehicleForm.body_type}
+                    onChange={e => setVehicleForm(prev => ({ ...prev, body_type: e.target.value }))}
+                  >
+                    <option value="">Select Body Type</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Hatchback">Hatchback</option>
+                    <option value="Coupe">Coupe</option>
+                    <option value="Truck">Truck</option>
+                    <option value="Van">Van</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Color
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    value={vehicleForm.color}
+                    onChange={e => setVehicleForm(prev => ({ ...prev, color: e.target.value }))}
+                  />
                 </div>
               </div>
 
@@ -331,7 +380,7 @@ export default function Sell() {
                   </div>
                 )}
 
-                {(vehicleForm.image_url || vehicleForm.gallery_images.length > 0) && (
+                {(vehicleForm.image_url || vehicleForm.images.split(',').length > 0) && (
                   <div className="mt-4 grid grid-cols-4 gap-4">
                     {vehicleForm.image_url && (
                       <img
@@ -340,7 +389,7 @@ export default function Sell() {
                         className="h-24 w-full object-cover rounded-lg"
                       />
                     )}
-                    {vehicleForm.gallery_images.map((url, index) => (
+                    {vehicleForm.images.split(',').map((url, index) => (
                       <img
                         key={index}
                         src={url}
