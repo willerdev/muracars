@@ -25,7 +25,7 @@ import MyListings from './pages/MyListings';
 import Settings from './pages/settings';
 import Offline from './pages/Offline';
 import Cars from './pages/cars';
-
+import KoreaService from './pages/KoreaOrderService';
 
 interface PrivateRouteProps {
   element: React.ReactElement;
@@ -92,12 +92,12 @@ function App() {
   }
 
   const filteredVehicles = vehicles.filter(vehicle => {
-    if (filters.condition && vehicle.condition !== filters.condition) return false;
+    if (filters.condition && vehicle.features !== filters.condition) return false;
     if (filters.minPrice && vehicle.price < filters.minPrice) return false;
     if (filters.maxPrice && vehicle.price > filters.maxPrice) return false;
     if (filters.make && vehicle.make !== filters.make) return false;
     if (filters.transmission && vehicle.transmission !== filters.transmission) return false;
-    if (filters.fuelType && vehicle.fuelType !== filters.fuelType) return false;
+    if (filters.fuelType && vehicle.fuel_type !== filters.fuelType) return false;
     return true;
   });
 
@@ -156,11 +156,12 @@ function App() {
                   </main>
                 </>
               } />
-              <Route path="/spare-parts" element={<SparePartsPage />} />
+              <Route path="/spare-parts" element={<PrivateRoute element={<SparePartsPage />} />} />
               <Route path="/sell" element={<PrivateRoute element={<Sell />} />} />
               <Route path="/new-cars" element={<NewCars />} />
               <Route path="/used-cars" element={<UsedCars />} />
               <Route path="/my-listings" element={<PrivateRoute element={<MyListings />} />} />
+              <Route path="/korea-service" element={<PrivateRoute element={<KoreaService />} />} />
             </Routes>
             
             <Footer className="hidden md:block" />

@@ -5,6 +5,7 @@ import { Vehicle } from '../types';
 import { X, Upload, Loader, Car, Package2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { uploadFile } from '../lib/storage';
+import { sendVehicleListingEmail } from '../lib/emailService';
 
 type ListingType = 'vehicle' | 'part';
 
@@ -30,7 +31,7 @@ export default function Sell() {
     image_url: '',
     features: '',
     images: '',
-    flag: 'used' as const,
+    flag: 'used' as 'used' | 'import',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   });
@@ -116,6 +117,9 @@ export default function Sell() {
         });
 
       if (userCarError) throw userCarError;
+
+      // Send email notification for new vehicle listing
+      await sendVehicleListingEmail(vehicleForm, user?.email);
 
       navigate('/profile', { 
         state: { message: 'Vehicle listed successfully!' }
@@ -273,11 +277,11 @@ export default function Sell() {
                   <select
                     required
                     className="w-full border border-gray-300 rounded-md p-2"
-                    value={vehicleForm.condition}
-                    onChange={e => setVehicleForm(prev => ({ ...prev, condition: e.target.value as Vehicle['condition'] }))}
+                    value={vehicleForm.flag}
+                    onChange={e => setVehicleForm(prev => ({ ...prev, flag: e.target.value as Vehicle['flag'] }))}
                   >
-                    <option value="Used">Used</option>
-                    <option value="New">New</option>
+                    <option value="used">Used</option>
+                    <option value="import">Import</option>
                   </select>
                 </div>
 
@@ -310,6 +314,7 @@ export default function Sell() {
                     <option value="Diesel">Diesel</option>
                     <option value="Electric">Electric</option>
                     <option value="Hybrid">Hybrid</option>
+                    <option value="Plugin Hybrid">Plugin Hybrid</option>
                   </select>
                 </div>
 
@@ -380,23 +385,13 @@ export default function Sell() {
                   </div>
                 )}
 
-                {(vehicleForm.image_url || vehicleForm.images.split(',').length > 0) && (
-                  <div className="mt-4 grid grid-cols-4 gap-4">
-                    {vehicleForm.image_url && (
-                      <img
-                        src={vehicleForm.image_url}
-                        alt="Main vehicle image"
-                        className="h-24 w-full object-cover rounded-lg"
-                      />
-                    )}
-                    {vehicleForm.images.split(',').map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Vehicle image ${index + 1}`}
-                        className="h-24 w-full object-cover rounded-lg"
-                      />
-                    ))}
+                {vehicleForm.image_url && (
+                  <div className="mt-4">
+                    <img
+                      src={vehicleForm.image_url}
+                      alt="Main vehicle image"
+                      className="h-48 w-full object-cover rounded-lg"
+                    />
                   </div>
                 )}
               </div>

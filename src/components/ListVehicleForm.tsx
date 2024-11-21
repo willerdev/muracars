@@ -15,18 +15,18 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
   const [uploadingImages, setUploadingImages] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const [form, setForm] = useState({
+  const [vehicleForm, setVehicleForm] = useState({
     make: '',
     model: '',
     year: new Date().getFullYear(),
     price: 0,
     mileage: 0,
-    transmission: 'Automatic' as Vehicle['transmission'],
-    fuel_type: 'Petrol' as Vehicle['fuel_type'],
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
     body_type: '',
     color: '',
-    features: '',
     image_url: '',
+    features: '',
     images: '',
     flag: 'used' as const,
     created_at: new Date().toISOString(),
@@ -46,7 +46,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
       }
 
       if (uploadedUrls.length > 0) {
-        setForm(prev => ({
+        setVehicleForm(prev => ({
           ...prev,
           image_url: uploadedUrls[0],
           images: uploadedUrls.join(',')
@@ -67,19 +67,19 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
 
     try {
       const vehicleData = {
-        make: form.make,
-        model: form.model,
-        year: form.year,
-        price: form.price,
-        mileage: form.mileage,
-        transmission: form.transmission,
-        fuel_type: form.fuel_type,
-        body_type: form.body_type,
-        color: form.color,
-        image_url: form.image_url,
-        features: form.features,
-        images: form.images,
-        flag: form.flag,
+        make: vehicleForm.make,
+        model: vehicleForm.model,
+        year: vehicleForm.year,
+        price: vehicleForm.price,
+        mileage: vehicleForm.mileage,
+        transmission: vehicleForm.transmission,
+        fuel_type: vehicleForm.fuel_type,
+        body_type: vehicleForm.body_type,
+        color: vehicleForm.color,
+        image_url: vehicleForm.image_url,
+        features: vehicleForm.features,
+        images: vehicleForm.images,
+        flag: vehicleForm.flag,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -142,8 +142,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   type="text"
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.make}
-                  onChange={e => setForm(prev => ({ ...prev, make: e.target.value }))}
+                  value={vehicleForm.make}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, make: e.target.value }))}
                 />
               </div>
 
@@ -155,8 +155,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   type="text"
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.model}
-                  onChange={e => setForm(prev => ({ ...prev, model: e.target.value }))}
+                  value={vehicleForm.model}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, model: e.target.value }))}
                 />
               </div>
 
@@ -170,8 +170,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   min="1900"
                   max={new Date().getFullYear()}
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.year}
-                  onChange={e => setForm(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+                  value={vehicleForm.year}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                 />
               </div>
 
@@ -184,8 +184,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   required
                   min="0"
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.price}
-                  onChange={e => setForm(prev => ({ ...prev, price: parseInt(e.target.value) }))}
+                  value={vehicleForm.price}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, price: parseInt(e.target.value) }))}
                 />
               </div>
 
@@ -198,8 +198,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   required
                   min="0"
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.mileage}
-                  onChange={e => setForm(prev => ({ ...prev, mileage: parseInt(e.target.value) }))}
+                  value={vehicleForm.mileage}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, mileage: parseInt(e.target.value) }))}
                 />
               </div>
 
@@ -210,8 +210,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                 <select
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.transmission}
-                  onChange={e => setForm(prev => ({ ...prev, transmission: e.target.value as Vehicle['transmission'] }))}
+                  value={vehicleForm.transmission}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, transmission: e.target.value as Vehicle['transmission'] }))}
                 >
                   <option value="Automatic">Automatic</option>
                   <option value="Manual">Manual</option>
@@ -225,8 +225,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                 <select
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.fuelType}
-                  onChange={e => setForm(prev => ({ ...prev, fuelType: e.target.value as Vehicle['fuelType'] }))}
+                  value={vehicleForm.fuel_type}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, fuel_type: e.target.value as Vehicle['fuel_type'] }))}
                 >
                   <option value="Petrol">Petrol</option>
                   <option value="Diesel">Diesel</option>
@@ -243,8 +243,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   type="text"
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.body_type}
-                  onChange={e => setForm(prev => ({ ...prev, body_type: e.target.value }))}
+                  value={vehicleForm.body_type}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, body_type: e.target.value }))}
                 />
               </div>
 
@@ -256,8 +256,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                   type="text"
                   required
                   className="w-full border border-gray-300 rounded-md p-2"
-                  value={form.color}
-                  onChange={e => setForm(prev => ({ ...prev, color: e.target.value }))}
+                  value={vehicleForm.color}
+                  onChange={e => setVehicleForm(prev => ({ ...prev, color: e.target.value }))}
                 />
               </div>
             </div>
@@ -269,8 +269,8 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
               <textarea
                 rows={4}
                 className="w-full border border-gray-300 rounded-md p-2"
-                value={form.description}
-                onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                value={vehicleForm.features}
+                onChange={e => setVehicleForm(prev => ({ ...prev, features: e.target.value }))}
               />
             </div>
 
@@ -291,7 +291,7 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                         className="sr-only"
                         onChange={handleImageUpload}
                         disabled={uploadingImages}
-                        required={!form.image_url}
+                        required={!vehicleForm.image_url}
                       />
                     </label>
                   </div>
@@ -306,23 +306,24 @@ export default function ListVehicleForm({ onClose, onSuccess, userId }: ListVehi
                 </div>
               )}
 
-              {(form.image_url || form.gallery_images.length > 0) && (
+              {(vehicleForm.image_url || vehicleForm.images.split(',').length > 0) && (
                 <div className="mt-4 grid grid-cols-4 gap-4">
-                  {form.image_url && (
+                  {vehicleForm.image_url && (
                     <img
-                      src={form.image_url}
+                      src={vehicleForm.image_url}
                       alt="Main vehicle image"
                       className="h-24 w-full object-cover rounded-lg"
                     />
                   )}
-                  {form.gallery_images.map((url, index) => (
+                  {vehicleForm.image_url && (
+                  <div className="mt-4">
                     <img
-                      key={index}
-                      src={url}
-                      alt={`Vehicle image ${index + 1}`}
-                      className="h-24 w-full object-cover rounded-lg"
+                      src={vehicleForm.image_url}
+                      alt="Main vehicle image"
+                      className="h-48 w-full object-cover rounded-lg"
                     />
-                  ))}
+                  </div>
+                )}
                 </div>
               )}
             </div>

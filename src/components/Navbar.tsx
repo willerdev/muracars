@@ -23,7 +23,7 @@ export default function Navbar({ onCartClick }: NavbarProps) {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="hover:text-gray-300">Vehicles</Link>
             <Link to="/spare-parts" className="hover:text-gray-300">Spare Parts</Link>
-            <a href="#services" className="hover:text-gray-300">Services</a>
+            <Link to="/korea-service" className="hover:text-gray-300">Korea orders</Link>
             <Search className="h-5 w-5 cursor-pointer hover:text-gray-300" />
             <ShoppingCart 
               className="h-5 w-5 cursor-pointer hover:text-gray-300"

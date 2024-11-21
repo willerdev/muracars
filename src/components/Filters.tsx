@@ -7,7 +7,7 @@ interface FiltersProps {
 
 export default function Filters({ filters, setFilters }: FiltersProps) {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
+    <div className="hidden md:block bg-white p-4 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold mb-4">Filters</h3>
       
       <div className="space-y-4">

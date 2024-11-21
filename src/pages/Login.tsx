@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Car } from 'lucide-react';
+import { sendLoginNotificationEmail } from '../lib/emailService';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,8 @@ export default function Login() {
 
     try {
       await login(email, password);
+      await sendLoginNotificationEmail(email);
+      
       const params = new URLSearchParams(location.search);
       const redirectTo = params.get('redirect') || '/';
       navigate(redirectTo);
