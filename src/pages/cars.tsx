@@ -135,6 +135,18 @@ export default function VehicleDetail() {
             alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
             className="w-full h-full object-cover"
           />
+          <button 
+            onClick={() => handleImageSwipe('prev')}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+          >
+            ←
+          </button>
+          <button 
+            onClick={() => handleImageSwipe('next')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+          >
+            →
+          </button>
           <div className="absolute bottom-4 left-0 right-0 flex justify-center">
             <div className="flex gap-1.5">
               {[vehicle.image_url, ...(typeof vehicle.images === 'string' 
