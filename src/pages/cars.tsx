@@ -161,7 +161,7 @@ export default function VehicleDetail() {
           <h1 className="text-2xl font-bold">
             {vehicle.year} {vehicle.make} {vehicle.model}
           </h1>
-          <p className="text-2xl font-bold text-black mt-2">
+          <p className="text-2xl font-bold text-gray-900 mt-2">
             ${vehicle.price.toLocaleString()}
           </p>
         </div>
@@ -193,14 +193,14 @@ export default function VehicleDetail() {
         ) : Array.isArray(vehicle.features) ? (
           vehicle.features.map((feature, index) => (
             <div key={index} className="flex items-center">
-              <Check className="h-4 w-4 text-green-500 mr-2" />
+              <Check className="h-4 w-4 text-gray-900 mr-2" />
               <span className="text-sm">{feature}</span>
             </div>
           ))
         ) : null}
 
         {/* Description */}
-        <div className="mb-20">
+        {/* <div className="mb-20">
           <h2 className="text-lg font-semibold mb-3">Description</h2>
           <div className="bg-white rounded-xl p-4">
             <p className="text-sm text-gray-600">
@@ -210,7 +210,7 @@ export default function VehicleDetail() {
                 and has been thoroughly inspected to ensure the highest quality standards.`}
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Fixed Bottom Actions */}
