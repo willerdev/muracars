@@ -156,7 +156,7 @@ export default function VehicleDetail() {
       </div>
 
       {/* Vehicle Information */}
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 mb-20">
         <div className="mb-4">
           <h1 className="text-2xl font-bold">
             {vehicle.year} {vehicle.make} {vehicle.model}
