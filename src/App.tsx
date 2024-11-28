@@ -26,7 +26,7 @@ import Settings from './pages/settings';
 import Offline from './pages/Offline';
 import Cars from './pages/cars';
 import KoreaService from './pages/KoreaOrderService';
-
+import AddCar from './pages/AddCar';
 interface PrivateRouteProps {
   element: React.ReactElement;
 }
@@ -117,6 +117,7 @@ function App() {
                 path="/order/:id" 
                 element={<PrivateRoute element={<OrderPage />} />} 
               />
+              <Route path="/add-car" element={<PrivateRoute element={<AddCar />} />} />
               <Route 
                 path="/cars/:id" 
                 element={<PrivateRoute element={<Cars />} />} 

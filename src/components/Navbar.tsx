@@ -16,12 +16,13 @@ export default function Navbar({ onCartClick }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
-            <Car className="h-8 w-8" />
+            <img src="https://i.imgur.com/RD5e2HC.png" alt="MURA" className="h-8 w-8" />
             <span className="ml-2 text-xl font-bold">MURA</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="hover:text-gray-300">Vehicles</Link>
+   
+            <Link to="/add-car" className="block px-3 py-2 hover:bg-gray-900">Quick Add Car</Link>
             <Link to="/spare-parts" className="hover:text-gray-300">Spare Parts</Link>
             <Link to="/korea-service" className="hover:text-gray-300">Korea orders</Link>
             <Search className="h-5 w-5 cursor-pointer hover:text-gray-300" />
@@ -57,7 +58,8 @@ export default function Navbar({ onCartClick }: NavbarProps) {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link to="/" className="block px-3 py-2 hover:bg-gray-900">Vehicles</Link>
+           
+            <Link to="/add-car" className="block px-3 py-2 hover:bg-gray-900">Quick add Car</Link>
             <Link to="/spare-parts" className="block px-3 py-2 hover:bg-gray-900">Spare Parts</Link>
             <Link to="/korea-service" className="block px-3 py-2 hover:bg-gray-900">Korea Service</Link>
             {isAuthenticated ? (
